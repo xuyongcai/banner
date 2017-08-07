@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+				list-style: none;
+			}
+			.box{
+				position: relative;
+				width: 790px;
+				height: 340px;
+				margin: 50px auto;
+			}
+			.box ul{
+				position: relative;
+				z-index: 1;
+			}
+			.box ul li{
+				position: absolute;
+				top: 0;
+				left: 0;				
+			}
+			.box:hover .btn{
+				background-color:rgba(0,0,0,0.2);
+				display: block;
+			}
+			.box .btn:hover {
+				background-color:rgba(0,0,0,0.7);
+				display: block;
+			}
+			.box .btn{
+				position: absolute;
+				width: 30px;
+				height: 60px;
+				line-height: 60px;
+				color: white;
+				/*background-color: black;*/
+				top: 50%;
+				transform: translateY(-50%);
+				z-index: 2;
+				cursor: pointer;
+				display: none;
+			}
+			.box #next{
+				right: 0;
+				text-align: right;
+			}
+			.box ol{
+				position: absolute;
+				z-index: 2;
+				left: 50%;
+				transform: translateX(-50%);
+				bottom: 10px;
+				padding: 5px 10px;
+				border-radius: 20px;
+				background-color: rgba(255,255,255,0.6);
+			}
+			.box ol li{
+				float: left;
+				width: 15px;
+				height: 15px;
+				border-radius: 50%;
+				background-color:white;
+			}
+			.box ol li + li{
+				margin-left: 20px;
+			}
+			.box ol li.cur{
+				background-color: orange;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="box">
+			<ul>
+				<li class="cur"><img src="img/01.jpg"/></li>
+				<li><img src="img/02.jpg"/></li>
+				<li><img src="img/03.jpg"/></li>
+				<li><img src="img/04.png"/></li>
+				<li><img src="img/05.png"/></li>
+			</ul>
+			<div class="btn" id="prev">〈 </div>
+			<div class="btn" id="next"> 〉</div>
+			<!--<ol class="dot">
+				<li class="cur"></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ol>-->
+		</div>
+	</body>
+</html>
+<script src="js/jquery.js"></script>
+<script type="text/javascript">
+    var $box = $(".box");
+    var $Ul = $(".box ul");
+    var $aLi = $(".box ul li");
+    var $btn = $(".box .btn");
+	var key = 0;
+	//创建li
+	$Ul.after("<ol class='dot'></ol>");
+	var $oOl = $box.find(".dot")
+	$aLi.each(function(){
+		$oOl.append("<li></li>")
+	})
+	$oOl.find("li").eq(0).addClass("cur");
+	
+	//tag切换
+	$oOl.find("li").mouseover(function(){
+		clearInterval($box.timer);
+		$(this).addClass("cur").siblings().removeClass();
+		key = $(this).index();
+		$aLi.stop().fadeOut(300).eq(key).stop().fadeIn(300);
+		$oOl.find("li").mouseout(function(){
+		autoPlay();
+		})
+	})
+	autoPlay();
+	
+	//自动轮播
+	function autoPlay(){
+		clearInterval($box.timer);
+		$box.timer = setInterval(function(){
+			key = ++key % $aLi.length;
+			$oOl.find("li").eq(key).addClass("cur").siblings().removeClass();
+			$aLi.stop().fadeOut(300).eq(key).stop().fadeIn(300)
+		},2000)
+	}
+	//下一张 ，上一张
+	$btn.click(function(){
+		clearInterval($box.timer);
+		if($(this).attr("id")== "next"){
+			key = ++key % $aLi.length;
+		}else{
+			key--;
+			if(key<0){
+				key=$aLi.length-1;
+			}
+		}
+		$oOl.find("li").eq(key).addClass("cur").siblings().removeClass();
+		$aLi.stop().fadeOut(300).eq(key).stop().fadeIn(300);
+		autoPlay();
+	})
+</script>
